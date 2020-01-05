@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package dashboardproto;
+
+message RequestHeader {
+    string token = 1;
+}
+
+message DashboardRequest {
+    RequestHeader header = 1;
+    string name = 2;
+}
+
+message ComponentRequest {
+    RequestHeader header = 1;
+    string name = 2;
+}
+
+message DashboardResponse {
+    int32 statusCode = 1;
+    string message = 2;
+    message Component {
+        int32 id = 1;
+        string name = 2;
+        string html = 3;
+    }
+    message Row {
+        int32 id = 1;
+        repeated Component components = 2;
+    }
+    message Data {
+        int32 id = 1;
+        string name = 2;
+        repeated Row rows = 3;
+    }
+    Data data = 3;
+}
+
+message ComponentResponse {
+    int32 statusCode = 1;
+    string message = 2;
+    message Value {
+        string amount = 1;
+    }
+    message Chart {
+        string summary = 1;
+        string trend = 2;
+        repeated string labels = 3;
+        message Series {
+            repeated int64 Values = 1;
+        }
+        repeated Series series = 4;
+    }
+    message Data {
+        Value value = 1;
+        Chart chart = 2;
+    }
+    Data data = 3;
+}
+
+service Dashboard {
+    rpc GetDashboardData(DashboardRequest) returns (DashboardResponse);
+    rpc GetComponentContent(ComponentRequest) returns (ComponentResponse);
+}
